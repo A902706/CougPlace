@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Categories</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">CougPlace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container">
+        <h1 class="mb-4">Manage Categories</h1>
+
+        <!-- Add Category Button -->
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#categoryModal" data-action="Add">Add New Category</button>
+
+        <!-- Categories Table -->
+        <table class="table table-striped table-hover">
+            <thead class="table-dark"> <!-- Table header with names for each column-->
+                <tr>
+                    <th>ID</th>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody> <!-- Table body with example categories-->
+                <!--Two example categories-->
+                <tr>
+                    <td>1</td>
+                    <td>Textbooks</td>
+                    <td>Books for classes, study guides</td>
+                    <td>
+                        <!--Will allow to edit/delete columns-->
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#categoryModal" data-action="Edit" data-category="Textbooks">Edit</button>
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal" data-category="Textbooks">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Electronics</td>
+                    <td>Phones, laptops, accessories</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#categoryModal" data-action="Edit" data-category="Electronics">Edit</button>
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal" data-category="Electronics">Delete</button>
+                    </td>
+                </tr>
+                <!-- Add more categories will be added dynamically later with js-->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Category Action</h5> <!-- The title will later say category "Add" or "Edit" -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <!--Category name field-->
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+                        <!--Description field-->
+                        <div class="mb-3">
+                            <label for="categoryDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+                        </div>
+                        <input type="hidden" id="modalAction">
+                    </form>
+                </div>
+                <!-- Save / Cancel buttons-->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCategoryBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Category Modal -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!--Confirm delete header-->
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!--Confirm delete body-->
+                <div class="modal-body">
+                    Are you sure you want to delete <strong id="deleteCategoryName">this category</strong>?
+                </div>
+                <!-- Delete / Cancel buttons-->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
