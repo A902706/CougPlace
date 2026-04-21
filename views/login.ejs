@@ -21,7 +21,11 @@
     <div class="card shadow p-4" style="width: 350px;">
 
       <h3 class="text-center mb-4">Login</h3>
-
+      <% if (typeof error !== 'undefined') { %>
+        <div class="alert alert-danger text-center">
+          <%= error %>
+        </div>
+      <% } %>
       <form action="/login" method="POST">
 
         <div class="mb-3">

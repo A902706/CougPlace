@@ -1,7 +1,10 @@
 var express = require('express');
-var router = express.Router();
 const nodemailer = require("nodemailer");
+const { setDefaultHighWaterMark } = require('nodemailer/lib/xoauth2');
 
+var router = express.Router();
+
+/*Email that will be sending the verification codes.*/
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -13,18 +16,41 @@ const transporter = nodemailer.createTransport({
 let users = [];
 let pendingUser = {};
 
+/*DIRECT TO login page*/
 router.get('/', function(req, res, next) {
   res.redirect('/login');
 });
 
+/*GET login*/
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
 
+/*POST Login*/
+router.post('/login', function(req, res) {
+
+  const { email, password } = req.body;
+
+  const cEmail = email.toLowerCase();
+  const user = users.find(u => u.email === cEmail);
+
+  if (!user) {
+    return res.render('login', { error: "User not found" });
+  }
+
+  if (user.password !== password) {
+    return res.render('login', { error: "Incorrect password" });
+  }
+
+  return res.redirect('/marketplace');
+});
+
+/*GET signup */
 router.get('/signup', function(req, res) {
   res.render('signup');
 });
 
+/*GET Marketplace */
 router.get('/marketplace', function(req, res, next) {
 
   const allowedSections = [
@@ -53,9 +79,10 @@ router.get('/marketplace', function(req, res, next) {
   });
 });
 
+/*POST Signup */
 router.post('/signup', function(req, res) {
 
-  const { firstName, lastName, email, gender, age } = req.body;
+  const { firstName, lastName, email, gender, age, password} = req.body;
 
   let errors = [];
 
@@ -73,12 +100,15 @@ router.post('/signup', function(req, res) {
 
   const code = Math.floor(100000 + Math.random() * 900000);
 
-  pendingUser[email] = {
+  const cEmail = email.toLowerCase();
+
+  pendingUser[cEmail] = {
     code: code,
     firstName,
     lastName,
     gender,
-    age: Number(age)
+    age: Number(age),
+    password: password
   };
 
   console.log("Pending user:", pendingUser);
@@ -116,7 +146,15 @@ router.post('/verify', function(req, res) {
     return res.send("Invalid code.");
   }
 
-  users.push(pendingUser[email]);
+  users.push({
+    email: email,
+    firstName: pendingUser[email].firstName,
+    lastName: pendingUser[email].lastName,
+    gender: pendingUser[email].gender,
+    age: pendingUser[email].age,
+    password: pendingUser[email].password
+  });
+
   delete pendingUser[email];
 
   return res.redirect('/login');
