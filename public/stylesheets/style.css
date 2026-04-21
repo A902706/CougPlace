@@ -86,3 +86,8 @@ body {
   height: 120px;
   object-fit: cover;
 }
+
+#BoxColor
+{
+  background-color: #981e32;
+}
