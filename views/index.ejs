@@ -2,11 +2,737 @@
 <html>
 <head>
   <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <!-- Main Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark custom-nav">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/?section=marketplace">CougPlace</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  <h1><%= title %></h1>
-  <p>Welcome to <%= title %></p>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link <%= section === 'marketplace' || section === 'search-results' || section === 'item-details' ? 'active' : '' %>" href="/?section=marketplace">
+              Marketplace
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= section === 'profile' || section === 'edit-profile' || section === 'change-password' ? 'active' : '' %>" href="/?section=profile">
+              Profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= section === 'seller-dashboard' || section === 'create-listing' || section === 'seller-messages' || section === 'report-listing' || section === 'become-seller' ? 'active' : '' %>" href="/?section=seller-dashboard">
+              Seller
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
+  <!-- Marketplace family subnav -->
+  <% if (section === 'marketplace' || section === 'search-results' || section === 'item-details') { %>
+    <div class="container mt-4">
+      <div class="d-flex gap-2 flex-wrap mb-4">
+        <a href="/?section=marketplace" class="btn btn-outline-dark">Marketplace</a>
+        <a href="/?section=search-results" class="btn btn-outline-dark">Search Results</a>
+        <a href="/?section=item-details" class="btn btn-outline-dark">Item Details</a>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Profile family subnav -->
+  <% if (section === 'profile' || section === 'edit-profile' || section === 'change-password') { %>
+    <div class="container mt-4">
+      <div class="d-flex gap-2 flex-wrap mb-4">
+        <a href="/?section=profile" class="btn btn-outline-dark">Profile</a>
+        <a href="/?section=edit-profile" class="btn btn-outline-dark">Edit Profile</a>
+        <a href="/?section=change-password" class="btn btn-outline-dark">Change Password</a>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Seller family subnav -->
+  <% if (section === 'seller-dashboard' || section === 'create-listing' || section === 'seller-messages' || section === 'report-listing' || section === 'become-seller') { %>
+    <div class="container mt-4">
+      <div class="d-flex gap-2 flex-wrap mb-4">
+        <a href="/?section=seller-dashboard" class="btn btn-outline-dark">Seller Dashboard</a>
+        <a href="/?section=create-listing" class="btn btn-outline-dark">Create Listing</a>
+        <a href="/?section=seller-messages" class="btn btn-outline-dark">Messages</a>
+        <a href="/?section=report-listing" class="btn btn-outline-dark">Report Listing</a>
+        <a href="/?section=become-seller" class="btn btn-outline-dark">Become Seller</a>
+      </div>
+    </div>
+  <% } %>
+
+  <% if (section === 'marketplace') { %>
+    <header class="hero-section py-5">
+      <div class="container text-center">
+        <h1 class="fw-bold">Buy and Sell on Campus</h1>
+        <p class="lead">Find textbooks, electronics, dorm supplies, and more from verified students.</p>
+        <form class="row justify-content-center g-2 mt-3">
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Search for textbooks, calculators, mini fridges...">
+          </div>
+          <div class="col-md-2">
+            <a href="/?section=search-results" class="btn btn-light w-100">Search</a>
+          </div>
+        </form>
+      </div>
+    </header>
+
+    <main class="container my-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">Latest Listings</h2>
+        <select class="form-select w-auto">
+          <option selected>All Categories</option>
+          <option>Textbooks</option>
+          <option>Electronics</option>
+          <option>Dorm Supplies</option>
+          <option>School Supplies</option>
+        </select>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card listing-card h-100">
+            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="Calculus Textbook">
+            <div class="card-body">
+              <h5 class="card-title">Calculus Textbook</h5>
+              <p class="card-text text-muted">Good condition, used for Math 171.</p>
+              <p class="price">$45</p>
+              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card listing-card h-100">
+            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="Mini Fridge">
+            <div class="card-body">
+              <h5 class="card-title">Mini Fridge</h5>
+              <p class="card-text text-muted">Perfect for dorm rooms. Works great.</p>
+              <p class="price">$60</p>
+              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card listing-card h-100">
+            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="TI-84 Calculator">
+            <div class="card-body">
+              <h5 class="card-title">TI-84 Calculator</h5>
+              <p class="card-text text-muted">Lightly used. Great for engineering classes.</p>
+              <p class="price">$70</p>
+              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="py-4 text-center footer-custom">
+      <div class="container">
+        <p class="mb-0">© 2026 CougPlace - Campus Marketplace for Students</p>
+      </div>
+    </footer>
+
+  <% } else if (section === 'search-results') { %>
+    <main class="container my-5">
+      <div class="mb-4">
+        <h1 class="fw-bold">Search Results</h1>
+        <p class="text-muted">Showing results for: <strong>calculator</strong></p>
+      </div>
+
+      <div class="row mb-4 g-3">
+        <div class="col-md-4">
+          <input type="text" class="form-control" value="calculator">
+        </div>
+        <div class="col-md-3">
+          <select class="form-select">
+            <option selected>All Categories</option>
+            <option>School Supplies</option>
+            <option>Electronics</option>
+            <option>Textbooks</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select">
+            <option selected>Sort By</option>
+            <option>Price Low to High</option>
+            <option>Price High to Low</option>
+            <option>Newest</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary-custom w-100">Apply</button>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card listing-card h-100">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="https://via.placeholder.com/300x250" class="img-fluid rounded-start h-100 object-fit-cover" alt="TI-84 Plus">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">TI-84 Plus Calculator</h5>
+                  <p class="card-text text-muted">Used for one semester, works perfectly.</p>
+                  <p class="price">$65</p>
+                  <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card listing-card h-100">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="https://via.placeholder.com/300x250" class="img-fluid rounded-start h-100 object-fit-cover" alt="Scientific Calculator">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">Scientific Calculator</h5>
+                  <p class="card-text text-muted">Affordable and good for entry-level math courses.</p>
+                  <p class="price">$20</p>
+                  <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'item-details') { %>
+    <main class="container my-5">
+      <div class="row g-5">
+        <div class="col-lg-6">
+          <img src="https://via.placeholder.com/700x500" class="img-fluid rounded shadow-sm" alt="TI-84 Calculator">
+        </div>
+
+        <div class="col-lg-6">
+          <h1 class="fw-bold">TI-84 Calculator</h1>
+          <p class="price-lg">$70</p>
+          <p class="text-muted">Category: School Supplies</p>
+
+          <div class="mb-4">
+            <h5>Description</h5>
+            <p>
+              Lightly used TI-84 calculator in great condition. Works perfectly and is useful
+              for math, science, and engineering classes.
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h5>Seller Information</h5>
+            <p class="mb-1"><strong>Name:</strong> Alex Johnson</p>
+            <p class="mb-1"><strong>Verified Student:</strong> Yes</p>
+            <p class="mb-0"><strong>Pickup Area:</strong> CUB / Library</p>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a href="/?section=report-listing" class="btn btn-outline-danger">Report Listing</a>
+            <a href="/?section=marketplace" class="btn btn-primary-custom">Back to Marketplace</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'profile') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0 profile-card">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center gap-4 flex-wrap">
+                <img src="https://via.placeholder.com/120" class="rounded-circle profile-img" alt="Profile Picture">
+                <div>
+                  <h2 class="fw-bold mb-1">Bucky Student</h2>
+                  <p class="text-muted mb-1">Verified WSU Student</p>
+                  <p class="mb-0">bucky@wsu.edu</p>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <h6 class="text-muted">Phone</h6>
+                  <p>(555) 123-4567</p>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="text-muted">Campus</h6>
+                  <p>Pullman</p>
+                </div>
+                <div class="col-12">
+                  <h6 class="text-muted">Bio</h6>
+                  <p>WSU student using CougPlace to buy and sell school and dorm items on campus.</p>
+                </div>
+              </div>
+
+              <div class="mt-4 d-flex gap-2">
+                <a href="/?section=edit-profile" class="btn btn-primary-custom">Edit Profile</a>
+                <a href="/?section=change-password" class="btn btn-outline-secondary">Change Password</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="py-4 text-center footer-custom">
+      <div class="container">
+        <p class="mb-0">© 2026 CougPlace</p>
+      </div>
+    </footer>
+
+  <% } else if (section === 'edit-profile') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0 profile-card">
+            <div class="card-body p-4">
+              <h2 class="fw-bold mb-4">Edit Profile</h2>
+
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" value="Bucky Student">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" value="bucky@wsu.edu">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Phone</label>
+                  <input type="text" class="form-control" value="(555) 123-4567">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Campus</label>
+                  <select class="form-select">
+                    <option selected>Pullman</option>
+                    <option>Spokane</option>
+                    <option>Vancouver</option>
+                    <option>Tri-Cities</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Bio</label>
+                  <textarea class="form-control" rows="4">WSU student using CougPlace to buy and sell items around campus.</textarea>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary-custom">Save Changes</button>
+                  <a href="/?section=profile" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'change-password') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h2 class="fw-bold mb-4">Change Password</h2>
+
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">New Password</label>
+                  <input type="password" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Confirm New Password</label>
+                  <input type="password" class="form-control">
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary-custom">Update Password</button>
+                  <a href="/?section=profile" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'seller-dashboard') { %>
+    <main class="container my-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Seller Dashboard</h2>
+          <p class="text-muted mb-0">Manage your active, sold, and draft listings.</p>
+        </div>
+        <a href="/?section=create-listing" class="btn btn-primary-custom">Create Listing</a>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5 class="fw-bold">4</h5>
+              <p class="text-muted mb-0">Active Listings</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5 class="fw-bold">2</h5>
+              <p class="text-muted mb-0">Sold Items</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5 class="fw-bold">1</h5>
+              <p class="text-muted mb-0">Draft Listings</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">My Listings</h4>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary btn-sm">Active</button>
+              <button class="btn btn-outline-secondary btn-sm">Sold</button>
+              <button class="btn btn-outline-secondary btn-sm">Draft</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TI-84 Calculator</td>
+                  <td>School Supplies</td>
+                  <td>$70</td>
+                  <td><span class="badge text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    <button class="btn btn-sm btn-primary-custom">Mark as Sold</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Biology Textbook</td>
+                  <td>Books</td>
+                  <td>$35</td>
+                  <td><span class="badge text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                    <button class="btn btn-sm btn-primary-custom">Mark as Sold</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Dorm Mini Fridge</td>
+                  <td>Dorm Supplies</td>
+                  <td>$90</td>
+                  <td><span class="badge text-bg-secondary">Sold</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Lab Coat</td>
+                  <td>School Supplies</td>
+                  <td>$20</td>
+                  <td><span class="badge text-bg-warning">Draft</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-primary-custom">Publish</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="fw-bold mb-3">Recent Seller Activity</h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">A buyer messaged you about <strong>TI-84 Calculator</strong>.</li>
+            <li class="list-group-item">Your listing <strong>Biology Textbook</strong> was viewed 12 times today.</li>
+            <li class="list-group-item">You marked <strong>Dorm Mini Fridge</strong> as sold.</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'create-listing') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h2 class="fw-bold mb-4">Create New Listing</h2>
+
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Item Title</label>
+                  <input type="text" class="form-control" placeholder="Ex: TI-84 Calculator">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" rows="4" placeholder="Describe the condition and details of the item"></textarea>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select">
+                      <option selected>Select a category</option>
+                      <option>Books</option>
+                      <option>Electronics</option>
+                      <option>School Supplies</option>
+                      <option>Dorm Supplies</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Price</label>
+                    <input type="number" class="form-control" placeholder="Ex: 70">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Pickup Area</label>
+                  <input type="text" class="form-control" placeholder="Ex: CUB, Library, Dorm Lobby">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Upload Image</label>
+                  <input type="file" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Listing Status</label>
+                  <select class="form-select">
+                    <option>Publish Now</option>
+                    <option>Save as Draft</option>
+                  </select>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary-custom">Post Listing</button>
+                  <button type="button" class="btn btn-outline-secondary">Save Draft</button>
+                  <a href="/?section=seller-dashboard" class="btn btn-outline-danger">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'seller-messages') { %>
+    <main class="container my-5">
+      <h2 class="fw-bold mb-4">Seller Messages</h2>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+              <h5 class="fw-bold mb-3">Conversations</h5>
+
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">
+                  Alex Johnson - TI-84 Calculator
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  Maya Lee - Biology Textbook
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  Jordan Kim - Lab Coat
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="border-bottom pb-3 mb-3">
+                <h5 class="fw-bold mb-1">Alex Johnson</h5>
+                <p class="text-muted mb-0">About: TI-84 Calculator</p>
+              </div>
+
+              <div class="flex-grow-1 mb-3">
+                <div class="mb-3">
+                  <div class="p-3 bg-light rounded">
+                    <strong>Alex:</strong> Hi, is this calculator still available?
+                  </div>
+                </div>
+
+                <div class="mb-3 text-end">
+                  <div class="p-3 rounded d-inline-block border">
+                    <strong>You:</strong> Yes, it is still available.
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="p-3 bg-light rounded">
+                    <strong>Alex:</strong> Could we meet at the library tomorrow around 2?
+                  </div>
+                </div>
+              </div>
+
+              <form>
+                <label class="form-label">Reply</label>
+                <textarea class="form-control mb-3" rows="3" placeholder="Type your response here"></textarea>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary-custom">Send Message</button>
+                  <button type="button" class="btn btn-outline-secondary">Send Pickup Details</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'report-listing') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h1 class="fw-bold mb-3">Report Listing</h1>
+              <p class="text-muted">
+                Use this form to report suspicious, misleading, or inappropriate listings.
+              </p>
+
+              <form>
+                <div class="mb-3">
+                  <label for="listingName" class="form-label">Listing</label>
+                  <input type="text" class="form-control" id="listingName" value="TI-84 Calculator" readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label for="reason" class="form-label">Reason for Report</label>
+                  <select class="form-select" id="reason">
+                    <option selected>Select a reason</option>
+                    <option>Inappropriate content</option>
+                    <option>Spam or scam</option>
+                    <option>Misleading description</option>
+                    <option>Prohibited item</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="details" class="form-label">Additional Details</label>
+                  <textarea class="form-control" id="details" rows="5" placeholder="Provide more details here..."></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-danger">Submit Report</button>
+                  <a href="/?section=item-details" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  <% } else if (section === 'become-seller') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h2 class="fw-bold mb-3">Create Seller Profile</h2>
+              <p class="text-muted mb-4">
+                Activate your seller account to start posting listings and managing sales on CougPlace.
+              </p>
+
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" placeholder="Enter your full name">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">WSU Email</label>
+                  <input type="email" class="form-control" placeholder="yourname@wsu.edu">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Preferred Pickup Area</label>
+                  <input type="text" class="form-control" placeholder="Ex: CUB, Library, Spark">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Seller Bio</label>
+                  <textarea class="form-control" rows="3" placeholder="Optional short seller description"></textarea>
+                </div>
+
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" id="rulesCheck">
+                  <label class="form-check-label" for="rulesCheck">
+                    I agree to follow CougPlace marketplace rules and campus safety guidelines.
+                  </label>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary-custom">Create Seller Profile</button>
+                  <button type="button" class="btn btn-outline-secondary">Save for Later</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  <% } %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
