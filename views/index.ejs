@@ -9,7 +9,7 @@
   <!-- Main Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark custom-nav">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="/?section=marketplace">CougPlace</a>
+      <a class="navbar-brand fw-bold" href="/marketplace?section=marketplace">CougPlace</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -17,17 +17,17 @@
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link <%= section === 'marketplace' || section === 'search-results' || section === 'item-details' ? 'active' : '' %>" href="/?section=marketplace">
+            <a class="nav-link <%= section === 'marketplace' || section === 'search-results' || section === 'item-details' ? 'active' : '' %>" href="/marketplace?section=marketplace">
               Marketplace
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= section === 'profile' || section === 'edit-profile' || section === 'change-password' ? 'active' : '' %>" href="/?section=profile">
+            <a class="nav-link <%= section === 'profile' || section === 'edit-profile' || section === 'change-password' ? 'active' : '' %>" href="/marketplace?section=profile">
               Profile
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <%= section === 'seller-dashboard' || section === 'create-listing' || section === 'seller-messages' || section === 'report-listing' || section === 'become-seller' ? 'active' : '' %>" href="/?section=seller-dashboard">
+            <a class="nav-link <%= section === 'seller-dashboard' || section === 'create-listing' || section === 'seller-messages' || section === 'report-listing' || section === 'become-seller' ? 'active' : '' %>" href="/marketplace?section=seller-dashboard">
               Seller
             </a>
           </li>
@@ -40,9 +40,9 @@
   <% if (section === 'marketplace' || section === 'search-results' || section === 'item-details') { %>
     <div class="container mt-4">
       <div class="d-flex gap-2 flex-wrap mb-4">
-        <a href="/?section=marketplace" class="btn btn-outline-dark">Marketplace</a>
-        <a href="/?section=search-results" class="btn btn-outline-dark">Search Results</a>
-        <a href="/?section=item-details" class="btn btn-outline-dark">Item Details</a>
+        <a href="/marketplace?section=marketplace" class="btn btn-outline-dark">Marketplace</a>
+        <a href="/marketplace?section=search-results" class="btn btn-outline-dark">Search Results</a>
+        <a href="/marketplace?section=item-details" class="btn btn-outline-dark">Item Details</a>
       </div>
     </div>
   <% } %>
@@ -51,9 +51,9 @@
   <% if (section === 'profile' || section === 'edit-profile' || section === 'change-password') { %>
     <div class="container mt-4">
       <div class="d-flex gap-2 flex-wrap mb-4">
-        <a href="/?section=profile" class="btn btn-outline-dark">Profile</a>
-        <a href="/?section=edit-profile" class="btn btn-outline-dark">Edit Profile</a>
-        <a href="/?section=change-password" class="btn btn-outline-dark">Change Password</a>
+        <a href="/marketplace?section=profile" class="btn btn-outline-dark">Profile</a>
+        <a href="/marketplace?section=edit-profile" class="btn btn-outline-dark">Edit Profile</a>
+        <a href="/marketplace?section=change-password" class="btn btn-outline-dark">Change Password</a>
       </div>
     </div>
   <% } %>
@@ -62,11 +62,11 @@
   <% if (section === 'seller-dashboard' || section === 'create-listing' || section === 'seller-messages' || section === 'report-listing' || section === 'become-seller') { %>
     <div class="container mt-4">
       <div class="d-flex gap-2 flex-wrap mb-4">
-        <a href="/?section=seller-dashboard" class="btn btn-outline-dark">Seller Dashboard</a>
-        <a href="/?section=create-listing" class="btn btn-outline-dark">Create Listing</a>
-        <a href="/?section=seller-messages" class="btn btn-outline-dark">Messages</a>
-        <a href="/?section=report-listing" class="btn btn-outline-dark">Report Listing</a>
-        <a href="/?section=become-seller" class="btn btn-outline-dark">Become Seller</a>
+        <a href="/marketplace?section=seller-dashboard" class="btn btn-outline-dark">Seller Dashboard</a>
+        <a href="/marketplace?section=create-listing" class="btn btn-outline-dark">Create Listing</a>
+        <a href="/marketplace?section=seller-messages" class="btn btn-outline-dark">Messages</a>
+        <a href="/marketplace?section=report-listing" class="btn btn-outline-dark">Report Listing</a>
+        <a href="/marketplace?section=become-seller" class="btn btn-outline-dark">Become Seller</a>
       </div>
     </div>
   <% } %>
@@ -76,12 +76,14 @@
       <div class="container text-center">
         <h1 class="fw-bold">Buy and Sell on Campus</h1>
         <p class="lead">Find textbooks, electronics, dorm supplies, and more from verified students.</p>
-        <form class="row justify-content-center g-2 mt-3">
+
+        <form class="row justify-content-center g-2 mt-3" action="/marketplace" method="GET">
+          <input type="hidden" name="section" value="search-results">
           <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Search for textbooks, calculators, mini fridges...">
+            <input type="text" name="q" class="form-control" placeholder="Search for textbooks, calculators, mini fridges..." value="<%= q || '' %>">
           </div>
           <div class="col-md-2">
-            <a href="/?section=search-results" class="btn btn-light w-100">Search</a>
+            <button class="btn btn-light w-100" type="submit">Search</button>
           </div>
         </form>
       </div>
@@ -90,7 +92,7 @@
     <main class="container my-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="section-title mb-0">Latest Listings</h2>
-        <select class="form-select w-auto">
+        <select class="form-select w-auto" disabled>
           <option selected>All Categories</option>
           <option>Textbooks</option>
           <option>Electronics</option>
@@ -100,41 +102,25 @@
       </div>
 
       <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card listing-card h-100">
-            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="Calculus Textbook">
-            <div class="card-body">
-              <h5 class="card-title">Calculus Textbook</h5>
-              <p class="card-text text-muted">Good condition, used for Math 171.</p>
-              <p class="price">$45</p>
-              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
-            </div>
+        <% if (!listings || listings.length === 0) { %>
+          <div class="col-12">
+            <div class="alert alert-secondary mb-0">No active listings yet.</div>
           </div>
-        </div>
+        <% } %>
 
-        <div class="col-md-4">
-          <div class="card listing-card h-100">
-            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="Mini Fridge">
-            <div class="card-body">
-              <h5 class="card-title">Mini Fridge</h5>
-              <p class="card-text text-muted">Perfect for dorm rooms. Works great.</p>
-              <p class="price">$60</p>
-              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+        <% listings.forEach(function(listing) { %>
+          <div class="col-md-4">
+            <div class="card listing-card h-100">
+              <img src="<%= listing.image %>" class="card-img-top" alt="<%= listing.title %>">
+              <div class="card-body">
+                <h5 class="card-title"><%= listing.title %></h5>
+                <p class="card-text text-muted"><%= listing.description %></p>
+                <p class="price">$<%= listing.price %></p>
+                <a href="/marketplace?section=item-details&id=<%= listing.id %>" class="btn btn-primary-custom">View Details</a>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card listing-card h-100">
-            <img src="https://via.placeholder.com/400x250" class="card-img-top" alt="TI-84 Calculator">
-            <div class="card-body">
-              <h5 class="card-title">TI-84 Calculator</h5>
-              <p class="card-text text-muted">Lightly used. Great for engineering classes.</p>
-              <p class="price">$70</p>
-              <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
-            </div>
-          </div>
-        </div>
+        <% }) %>
       </div>
     </main>
 
@@ -148,106 +134,93 @@
     <main class="container my-5">
       <div class="mb-4">
         <h1 class="fw-bold">Search Results</h1>
-        <p class="text-muted">Showing results for: <strong>calculator</strong></p>
+        <p class="text-muted">Showing results for: <strong><%= q || 'all listings' %></strong></p>
       </div>
 
-      <div class="row mb-4 g-3">
+      <form class="row mb-4 g-3" action="/marketplace" method="GET">
+        <input type="hidden" name="section" value="search-results">
+
         <div class="col-md-4">
-          <input type="text" class="form-control" value="calculator">
+          <input type="text" name="q" class="form-control" value="<%= q || '' %>" placeholder="Search listings">
         </div>
         <div class="col-md-3">
-          <select class="form-select">
+          <select class="form-select" disabled>
             <option selected>All Categories</option>
-            <option>School Supplies</option>
-            <option>Electronics</option>
-            <option>Textbooks</option>
           </select>
         </div>
         <div class="col-md-3">
-          <select class="form-select">
+          <select class="form-select" disabled>
             <option selected>Sort By</option>
-            <option>Price Low to High</option>
-            <option>Price High to Low</option>
-            <option>Newest</option>
           </select>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-primary-custom w-100">Apply</button>
+          <button class="btn btn-primary-custom w-100" type="submit">Apply</button>
         </div>
-      </div>
+      </form>
 
       <div class="row g-4">
-        <div class="col-md-6">
-          <div class="card listing-card h-100">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="https://via.placeholder.com/300x250" class="img-fluid rounded-start h-100 object-fit-cover" alt="TI-84 Plus">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title">TI-84 Plus Calculator</h5>
-                  <p class="card-text text-muted">Used for one semester, works perfectly.</p>
-                  <p class="price">$65</p>
-                  <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
-                </div>
-              </div>
-            </div>
+        <% if (!filteredListings || filteredListings.length === 0) { %>
+          <div class="col-12">
+            <div class="alert alert-secondary">No listings matched your search.</div>
           </div>
-        </div>
+        <% } %>
 
-        <div class="col-md-6">
-          <div class="card listing-card h-100">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="https://via.placeholder.com/300x250" class="img-fluid rounded-start h-100 object-fit-cover" alt="Scientific Calculator">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title">Scientific Calculator</h5>
-                  <p class="card-text text-muted">Affordable and good for entry-level math courses.</p>
-                  <p class="price">$20</p>
-                  <a href="/?section=item-details" class="btn btn-primary-custom">View Details</a>
+        <% filteredListings.forEach(function(listing) { %>
+          <div class="col-md-6">
+            <div class="card listing-card h-100">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img src="<%= listing.image %>" class="img-fluid rounded-start h-100 object-fit-cover" alt="<%= listing.title %>">
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= listing.title %></h5>
+                    <p class="card-text text-muted"><%= listing.description %></p>
+                    <p class="price">$<%= listing.price %></p>
+                    <a href="/marketplace?section=item-details&id=<%= listing.id %>" class="btn btn-primary-custom">View Details</a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        <% }) %>
       </div>
     </main>
 
   <% } else if (section === 'item-details') { %>
     <main class="container my-5">
-      <div class="row g-5">
-        <div class="col-lg-6">
-          <img src="https://via.placeholder.com/700x500" class="img-fluid rounded shadow-sm" alt="TI-84 Calculator">
+      <% if (!selectedListing) { %>
+        <div class="alert alert-warning">Listing not found.</div>
+      <% } else { %>
+        <div class="row g-5">
+          <div class="col-lg-6">
+            <img src="<%= selectedListing.image %>" class="img-fluid rounded shadow-sm" alt="<%= selectedListing.title %>">
+          </div>
+
+          <div class="col-lg-6">
+            <h1 class="fw-bold"><%= selectedListing.title %></h1>
+            <p class="price-lg">$<%= selectedListing.price %></p>
+            <p class="text-muted">Category: <%= selectedListing.category %></p>
+
+            <div class="mb-4">
+              <h5>Description</h5>
+              <p><%= selectedListing.description %></p>
+            </div>
+
+            <div class="mb-4">
+              <h5>Seller Information</h5>
+              <p class="mb-1"><strong>Name:</strong> <%= selectedListing.sellerName %></p>
+              <p class="mb-1"><strong>Email:</strong> <%= selectedListing.sellerEmail %></p>
+              <p class="mb-0"><strong>Pickup Area:</strong> <%= selectedListing.pickupArea %></p>
+            </div>
+
+            <div class="d-flex gap-2">
+              <a href="/marketplace?section=report-listing&id=<%= selectedListing.id %>" class="btn btn-outline-danger">Report Listing</a>
+              <a href="/marketplace?section=marketplace" class="btn btn-primary-custom">Back to Marketplace</a>
+            </div>
+          </div>
         </div>
-
-        <div class="col-lg-6">
-          <h1 class="fw-bold">TI-84 Calculator</h1>
-          <p class="price-lg">$70</p>
-          <p class="text-muted">Category: School Supplies</p>
-
-          <div class="mb-4">
-            <h5>Description</h5>
-            <p>
-              Lightly used TI-84 calculator in great condition. Works perfectly and is useful
-              for math, science, and engineering classes.
-            </p>
-          </div>
-
-          <div class="mb-4">
-            <h5>Seller Information</h5>
-            <p class="mb-1"><strong>Name:</strong> Alex Johnson</p>
-            <p class="mb-1"><strong>Verified Student:</strong> Yes</p>
-            <p class="mb-0"><strong>Pickup Area:</strong> CUB / Library</p>
-          </div>
-
-          <div class="d-flex gap-2">
-            <a href="/?section=report-listing" class="btn btn-outline-danger">Report Listing</a>
-            <a href="/?section=marketplace" class="btn btn-primary-custom">Back to Marketplace</a>
-          </div>
-        </div>
-      </div>
+      <% } %>
     </main>
 
   <% } else if (section === 'profile') { %>
@@ -283,8 +256,8 @@
               </div>
 
               <div class="mt-4 d-flex gap-2">
-                <a href="/?section=edit-profile" class="btn btn-primary-custom">Edit Profile</a>
-                <a href="/?section=change-password" class="btn btn-outline-secondary">Change Password</a>
+                <a href="/marketplace?section=edit-profile" class="btn btn-primary-custom">Edit Profile</a>
+                <a href="/marketplace?section=change-password" class="btn btn-outline-secondary">Change Password</a>
               </div>
             </div>
           </div>
@@ -339,7 +312,7 @@
 
                 <div class="d-flex gap-2 mt-4">
                   <button type="submit" class="btn btn-primary-custom">Save Changes</button>
-                  <a href="/?section=profile" class="btn btn-outline-secondary">Cancel</a>
+                  <a href="/marketplace?section=profile" class="btn btn-outline-secondary">Cancel</a>
                 </div>
               </form>
             </div>
@@ -374,7 +347,7 @@
 
                 <div class="d-flex gap-2 mt-4">
                   <button type="submit" class="btn btn-primary-custom">Update Password</button>
-                  <a href="/?section=profile" class="btn btn-outline-secondary">Cancel</a>
+                  <a href="/marketplace?section=profile" class="btn btn-outline-secondary">Cancel</a>
                 </div>
               </form>
             </div>
@@ -390,14 +363,14 @@
           <h2 class="fw-bold mb-1">Seller Dashboard</h2>
           <p class="text-muted mb-0">Manage your active, sold, and draft listings.</p>
         </div>
-        <a href="/?section=create-listing" class="btn btn-primary-custom">Create Listing</a>
+        <a href="/marketplace?section=create-listing" class="btn btn-primary-custom">Create Listing</a>
       </div>
 
       <div class="row g-4 mb-4">
         <div class="col-md-4">
           <div class="card shadow-sm border-0">
             <div class="card-body text-center">
-              <h5 class="fw-bold">4</h5>
+              <h5 class="fw-bold"><%= activeCount %></h5>
               <p class="text-muted mb-0">Active Listings</p>
             </div>
           </div>
@@ -405,7 +378,7 @@
         <div class="col-md-4">
           <div class="card shadow-sm border-0">
             <div class="card-body text-center">
-              <h5 class="fw-bold">2</h5>
+              <h5 class="fw-bold"><%= soldCount %></h5>
               <p class="text-muted mb-0">Sold Items</p>
             </div>
           </div>
@@ -413,7 +386,7 @@
         <div class="col-md-4">
           <div class="card shadow-sm border-0">
             <div class="card-body text-center">
-              <h5 class="fw-bold">1</h5>
+              <h5 class="fw-bold"><%= draftCount %></h5>
               <p class="text-muted mb-0">Draft Listings</p>
             </div>
           </div>
@@ -424,11 +397,6 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-bold mb-0">My Listings</h4>
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-sm">Active</button>
-              <button class="btn btn-outline-secondary btn-sm">Sold</button>
-              <button class="btn btn-outline-secondary btn-sm">Draft</button>
-            </div>
           </div>
 
           <div class="table-responsive">
@@ -439,51 +407,47 @@
                   <th>Category</th>
                   <th>Price</th>
                   <th>Status</th>
+                  <th>Pickup Area</th>
                   <th class="text-end">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>TI-84 Calculator</td>
-                  <td>School Supplies</td>
-                  <td>$70</td>
-                  <td><span class="badge text-bg-success">Active</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
-                    <button class="btn btn-sm btn-outline-danger">Delete</button>
-                    <button class="btn btn-sm btn-primary-custom">Mark as Sold</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Biology Textbook</td>
-                  <td>Books</td>
-                  <td>$35</td>
-                  <td><span class="badge text-bg-success">Active</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
-                    <button class="btn btn-sm btn-outline-danger">Delete</button>
-                    <button class="btn btn-sm btn-primary-custom">Mark as Sold</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Dorm Mini Fridge</td>
-                  <td>Dorm Supplies</td>
-                  <td>$90</td>
-                  <td><span class="badge text-bg-secondary">Sold</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary">View</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Lab Coat</td>
-                  <td>School Supplies</td>
-                  <td>$20</td>
-                  <td><span class="badge text-bg-warning">Draft</span></td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
-                    <button class="btn btn-sm btn-primary-custom">Publish</button>
-                  </td>
-                </tr>
+                <% if (!sellerListings || sellerListings.length === 0) { %>
+                  <tr>
+                    <td colspan="6" class="text-center text-muted">No listings yet.</td>
+                  </tr>
+                <% } %>
+
+                <% sellerListings.forEach(function(listing) { %>
+                  <tr>
+                    <td><%= listing.title %></td>
+                    <td><%= listing.category %></td>
+                    <td>$<%= listing.price %></td>
+                    <td>
+                      <% if (listing.status === 'Active') { %>
+                        <span class="badge text-bg-success">Active</span>
+                      <% } else if (listing.status === 'Sold') { %>
+                        <span class="badge text-bg-secondary">Sold</span>
+                      <% } else { %>
+                        <span class="badge text-bg-warning">Draft</span>
+                      <% } %>
+                    </td>
+                    <td><%= listing.pickupArea %></td>
+                    <td class="text-end">
+                      <a href="/marketplace?section=item-details&id=<%= listing.id %>" class="btn btn-sm btn-outline-secondary">View</a>
+
+                      <% if (listing.status !== 'Sold') { %>
+                        <form action="/marketplace/listings/<%= listing.id %>/sold" method="POST" style="display:inline;">
+                          <button class="btn btn-sm btn-primary-custom" type="submit">Mark as Sold</button>
+                        </form>
+                      <% } %>
+
+                      <form action="/marketplace/listings/<%= listing.id %>/delete" method="POST" style="display:inline;">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
               </tbody>
             </table>
           </div>
@@ -494,9 +458,9 @@
         <div class="card-body">
           <h4 class="fw-bold mb-3">Recent Seller Activity</h4>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">A buyer messaged you about <strong>TI-84 Calculator</strong>.</li>
-            <li class="list-group-item">Your listing <strong>Biology Textbook</strong> was viewed 12 times today.</li>
-            <li class="list-group-item">You marked <strong>Dorm Mini Fridge</strong> as sold.</li>
+            <li class="list-group-item">Create a new listing to see it appear in your dashboard.</li>
+            <li class="list-group-item">Active, sold, and draft counts update automatically.</li>
+            <li class="list-group-item">Use the buttons above to view, sell, or delete listings.</li>
           </ul>
         </div>
       </div>
@@ -510,22 +474,22 @@
             <div class="card-body p-4">
               <h2 class="fw-bold mb-4">Create New Listing</h2>
 
-              <form>
+              <form action="/marketplace/listings" method="POST">
                 <div class="mb-3">
                   <label class="form-label">Item Title</label>
-                  <input type="text" class="form-control" placeholder="Ex: TI-84 Calculator">
+                  <input type="text" name="title" class="form-control" placeholder="Ex: TI-84 Calculator" required>
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label">Description</label>
-                  <textarea class="form-control" rows="4" placeholder="Describe the condition and details of the item"></textarea>
+                  <textarea name="description" class="form-control" rows="4" placeholder="Describe the condition and details of the item" required></textarea>
                 </div>
 
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>
-                    <select class="form-select">
-                      <option selected>Select a category</option>
+                    <select name="category" class="form-select" required>
+                      <option value="">Select a category</option>
                       <option>Books</option>
                       <option>Electronics</option>
                       <option>School Supplies</option>
@@ -536,34 +500,35 @@
 
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Price</label>
-                    <input type="number" class="form-control" placeholder="Ex: 70">
+                    <input type="number" name="price" class="form-control" placeholder="Ex: 70" required>
                   </div>
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label">Pickup Area</label>
-                  <input type="text" class="form-control" placeholder="Ex: CUB, Library, Dorm Lobby">
+                  <input type="text" name="pickupArea" class="form-control" placeholder="Ex: CUB, Library, Dorm Lobby" required>
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">Upload Image</label>
-                  <input type="file" class="form-control">
+                  <label class="form-label">Image URL</label>
+                  <input type="text" name="image" class="form-control" placeholder="Paste image URL or leave blank for placeholder">
                 </div>
 
                 <div class="mb-3">
                   <label class="form-label">Listing Status</label>
-                  <select class="form-select">
-                    <option>Publish Now</option>
-                    <option>Save as Draft</option>
+                  <select name="status" class="form-select">
+                    <option value="Active">Publish Now</option>
+                    <option value="Draft">Save as Draft</option>
                   </select>
                 </div>
 
                 <div class="d-flex gap-2 mt-4">
                   <button type="submit" class="btn btn-primary-custom">Post Listing</button>
-                  <button type="button" class="btn btn-outline-secondary">Save Draft</button>
-                  <a href="/?section=seller-dashboard" class="btn btn-outline-danger">Cancel</a>
+                  <a href="/marketplace?section=seller-dashboard" class="btn btn-outline-secondary">Go to Dashboard</a>
+                  <a href="/marketplace?section=seller-dashboard" class="btn btn-outline-danger">Cancel</a>
                 </div>
               </form>
+
             </div>
           </div>
         </div>
@@ -651,7 +616,13 @@
               <form>
                 <div class="mb-3">
                   <label for="listingName" class="form-label">Listing</label>
-                  <input type="text" class="form-control" id="listingName" value="TI-84 Calculator" readonly>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="listingName"
+                    value="<%= selectedListing ? selectedListing.title : 'Unknown Listing' %>"
+                    readonly
+                  >
                 </div>
 
                 <div class="mb-3">
@@ -673,7 +644,7 @@
 
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-danger">Submit Report</button>
-                  <a href="/?section=item-details" class="btn btn-outline-secondary">Cancel</a>
+                  <a href="/marketplace?section=item-details<%= selectedListing ? '&id=' + selectedListing.id : '' %>" class="btn btn-outline-secondary">Cancel</a>
                 </div>
               </form>
             </div>

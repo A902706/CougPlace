@@ -4,7 +4,7 @@ const { setDefaultHighWaterMark } = require('nodemailer/lib/xoauth2');
 
 var router = express.Router();
 
-/*Email that will be sending the verification codes.*/
+/* Email that will be sending the verification codes. */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -16,19 +16,58 @@ const transporter = nodemailer.createTransport({
 let users = [];
 let pendingUser = {};
 
-/*DIRECT TO login page*/
+/* In-memory listings */
+let listings = [
+  {
+    id: 1,
+    title: "Calculus Textbook",
+    description: "Good condition, used for Math 171.",
+    category: "Textbooks",
+    price: 45,
+    pickupArea: "CUB",
+    image: "https://via.placeholder.com/400x250",
+    status: "Active",
+    sellerName: "Alex Johnson",
+    sellerEmail: "alex@wsu.edu"
+  },
+  {
+    id: 2,
+    title: "Mini Fridge",
+    description: "Perfect for dorm rooms. Works great.",
+    category: "Dorm Supplies",
+    price: 60,
+    pickupArea: "Library",
+    image: "https://via.placeholder.com/400x250",
+    status: "Active",
+    sellerName: "Alex Johnson",
+    sellerEmail: "alex@wsu.edu"
+  },
+  {
+    id: 3,
+    title: "TI-84 Calculator",
+    description: "Lightly used. Great for engineering classes.",
+    category: "School Supplies",
+    price: 70,
+    pickupArea: "Spark",
+    image: "https://via.placeholder.com/400x250",
+    status: "Active",
+    sellerName: "Alex Johnson",
+    sellerEmail: "alex@wsu.edu"
+  }
+];
+
+/* DIRECT TO login page */
 router.get('/', function(req, res, next) {
   res.redirect('/login');
 });
 
-/*GET login*/
+/* GET login */
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
 
-/*POST Login*/
+/* POST Login */
 router.post('/login', function(req, res) {
-
   const { email, password } = req.body;
 
   const cEmail = email.toLowerCase();
@@ -42,17 +81,17 @@ router.post('/login', function(req, res) {
     return res.render('login', { error: "Incorrect password" });
   }
 
+  req.session.user = user;
   return res.redirect('/marketplace');
 });
 
-/*GET signup */
+/* GET signup */
 router.get('/signup', function(req, res) {
   res.render('signup');
 });
 
-/*GET Marketplace */
+/* GET Marketplace / all sections */
 router.get('/marketplace', function(req, res, next) {
-
   const allowedSections = [
     'marketplace',
     'search-results',
@@ -73,16 +112,104 @@ router.get('/marketplace', function(req, res, next) {
     section = 'marketplace';
   }
 
+  const q = (req.query.q || "").trim().toLowerCase();
+  let filteredListings = listings;
+
+  if (q) {
+    filteredListings = listings.filter(listing =>
+      listing.title.toLowerCase().includes(q) ||
+      listing.description.toLowerCase().includes(q) ||
+      listing.category.toLowerCase().includes(q)
+    );
+  }
+
+  const listingId = Number(req.query.id);
+  const selectedListing =
+    listings.find(l => l.id === listingId) ||
+    listings.find(l => l.status === "Active") ||
+    listings[0] ||
+    null;
+
+  const activeListings = listings.filter(l => l.status === "Active");
+  const soldListings = listings.filter(l => l.status === "Sold");
+  const draftListings = listings.filter(l => l.status === "Draft");
+
   res.render('index', {
     title: 'CougPlace',
-    section: section
+    section,
+    listings: activeListings,
+    filteredListings,
+    selectedListing,
+    sellerListings: listings,
+    activeCount: activeListings.length,
+    soldCount: soldListings.length,
+    draftCount: draftListings.length,
+    q
   });
 });
 
-/*POST Signup */
-router.post('/signup', function(req, res) {
+/* NEW: POST create listing */
+router.post('/marketplace/listings', function(req, res) {
+  const {
+    title,
+    description,
+    category,
+    price,
+    pickupArea,
+    image,
+    status
+  } = req.body;
 
-  const { firstName, lastName, email, gender, age, password} = req.body;
+  if (!title || !description || !category || !price || !pickupArea) {
+    return res.redirect('/marketplace?section=create-listing');
+  }
+
+  const newListing = {
+    id: listings.length ? listings[listings.length - 1].id + 1 : 1,
+    title: title.trim(),
+    description: description.trim(),
+    category: category.trim(),
+    price: Number(price),
+    pickupArea: pickupArea.trim(),
+    image: image && image.trim() !== "" ? image.trim() : "https://via.placeholder.com/400x250",
+    status: status || "Active",
+    sellerName: req.session.user
+      ? `${req.session.user.firstName} ${req.session.user.lastName}`
+      : "Bucky Student",
+    sellerEmail: req.session.user ? req.session.user.email : "bucky@wsu.edu"
+  };
+
+  listings.unshift(newListing);
+
+  if (newListing.status === "Draft") {
+    return res.redirect('/marketplace?section=seller-dashboard');
+  }
+
+  return res.redirect('/marketplace?section=marketplace');
+});
+
+/* OPTIONAL: mark listing as sold */
+router.post('/marketplace/listings/:id/sold', function(req, res) {
+  const id = Number(req.params.id);
+  const listing = listings.find(l => l.id === id);
+
+  if (listing) {
+    listing.status = "Sold";
+  }
+
+  res.redirect('/marketplace?section=seller-dashboard');
+});
+
+/* OPTIONAL: delete listing */
+router.post('/marketplace/listings/:id/delete', function(req, res) {
+  const id = Number(req.params.id);
+  listings = listings.filter(l => l.id !== id);
+  res.redirect('/marketplace?section=seller-dashboard');
+});
+
+/* POST Signup */
+router.post('/signup', function(req, res) {
+  const { firstName, lastName, email, gender, age, password } = req.body;
 
   let errors = [];
 
@@ -91,7 +218,7 @@ router.post('/signup', function(req, res) {
   }
 
   if (!email.endsWith('.edu')) {
-    errors.push("Email must contain \".edu\"");
+    errors.push('Email must contain ".edu"');
   }
 
   if (errors.length > 0) {
@@ -99,7 +226,6 @@ router.post('/signup', function(req, res) {
   }
 
   const code = Math.floor(100000 + Math.random() * 900000);
-
   const cEmail = email.toLowerCase();
 
   pendingUser[cEmail] = {
@@ -111,15 +237,12 @@ router.post('/signup', function(req, res) {
     password: password
   };
 
-  console.log("Pending user:", pendingUser);
-
   transporter.sendMail({
     from: "cougplace@gmail.com",
     to: email,
     subject: "Verify CougPlace account!",
     text: `Your code is: ${code}`
   }, (err, info) => {
-
     if (err) {
       console.log("Email error:", err);
       return res.send("Error sending email.");
@@ -127,7 +250,6 @@ router.post('/signup', function(req, res) {
 
     return res.render('verify', { email });
   });
-
 });
 
 router.get('/verify', function(req, res) {
@@ -135,7 +257,6 @@ router.get('/verify', function(req, res) {
 });
 
 router.post('/verify', function(req, res) {
-
   const { email, code } = req.body;
 
   if (!pendingUser[email]) {
@@ -156,7 +277,6 @@ router.post('/verify', function(req, res) {
   });
 
   delete pendingUser[email];
-
   return res.redirect('/login');
 });
 
