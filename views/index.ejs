@@ -231,10 +231,11 @@
             <div class="card-body p-4">
               <div class="d-flex align-items-center gap-4 flex-wrap">
                 <img src="https://via.placeholder.com/120" class="rounded-circle profile-img" alt="Profile Picture">
-                <div>
-                  <h2 class="fw-bold mb-1">Bucky Student</h2>
-                  <p class="text-muted mb-1">Verified WSU Student</p>
-                  <p class="mb-0">bucky@wsu.edu</p>
+                <h2 class="fw-bold mb-1">
+                  <%= currentUser ? currentUser.firstName + ' ' + currentUser.lastName : 'Unknown User' %>
+                </h2>
+                <p class="text-muted mb-1">Verified WSU Student</p>
+                <p class="mb-0"><%= currentUser ? currentUser.email : 'No email available' %></p>
                 </div>
               </div>
 
@@ -242,16 +243,22 @@
 
               <div class="row g-3">
                 <div class="col-md-6">
-                  <h6 class="text-muted">Phone</h6>
-                  <p>(555) 123-4567</p>
+                  <h6 class="text-muted">Gender</h6>
+                  <p><%= currentUser ? currentUser.gender : 'Not provided' %></p>
                 </div>
                 <div class="col-md-6">
-                  <h6 class="text-muted">Campus</h6>
-                  <p>Pullman</p>
+                  <h6 class="text-muted">Age</h6>
+                  <p><%= currentUser ? currentUser.age : 'Not provided' %></p>
                 </div>
                 <div class="col-12">
                   <h6 class="text-muted">Bio</h6>
-                  <p>WSU student using CougPlace to buy and sell school and dorm items on campus.</p>
+                  <p>
+                    <% if (currentUser) { %>
+                      <%= currentUser.firstName %> is using CougPlace to buy and sell items on campus.
+                    <% } else { %>
+                      No bio available.
+                    <% } %>
+                  </p>
                 </div>
               </div>
 
@@ -272,54 +279,83 @@
     </footer>
 
   <% } else if (section === 'edit-profile') { %>
-    <main class="container my-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="card shadow-sm border-0 profile-card">
-            <div class="card-body p-4">
-              <h2 class="fw-bold mb-4">Edit Profile</h2>
+  <main class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 profile-card">
+          <div class="card-body p-4">
+            <h2 class="fw-bold mb-4">Edit Profile</h2>
 
-              <form>
-                <div class="mb-3">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control" value="Bucky Student">
-                </div>
+            <form>
+              <div class="mb-3">
+                <label class="form-label">First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value="<%= currentUser ? currentUser.firstName : '' %>"
+                >
+              </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" class="form-control" value="bucky@wsu.edu">
-                </div>
+              <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  value="<%= currentUser ? currentUser.lastName : '' %>"
+                >
+              </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input type="text" class="form-control" value="(555) 123-4567">
-                </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  value="<%= currentUser ? currentUser.email : '' %>"
+                >
+              </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Campus</label>
-                  <select class="form-select">
-                    <option selected>Pullman</option>
-                    <option>Spokane</option>
-                    <option>Vancouver</option>
-                    <option>Tri-Cities</option>
-                  </select>
-                </div>
+              <div class="mb-3">
+                <label class="form-label">Gender</label>
+                <select class="form-select">
+                  <option <%= currentUser && currentUser.gender === 'Male' ? 'selected' : '' %>>
+                    Male
+                  </option>
+                  <option <%= currentUser && currentUser.gender === 'Female' ? 'selected' : '' %>>
+                    Female
+                  </option>
+                  <option <%= currentUser && currentUser.gender === 'Other' ? 'selected' : '' %>>
+                    Other
+                  </option>
+                </select>
+              </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Bio</label>
-                  <textarea class="form-control" rows="4">WSU student using CougPlace to buy and sell items around campus.</textarea>
-                </div>
+              <div class="mb-3">
+                <label class="form-label">Age</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  value="<%= currentUser ? currentUser.age : '' %>"
+                >
+              </div>
 
-                <div class="d-flex gap-2 mt-4">
-                  <button type="submit" class="btn btn-primary-custom">Save Changes</button>
-                  <a href="/marketplace?section=profile" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-              </form>
-            </div>
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary-custom">
+                  Save Changes
+                </button>
+                <a
+                  href="/marketplace?section=profile"
+                  class="btn btn-outline-secondary"
+                >
+                  Cancel
+                </a>
+              </div>
+            </form>
+
           </div>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
   <% } else if (section === 'change-password') { %>
     <main class="container my-5">

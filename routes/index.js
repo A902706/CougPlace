@@ -115,7 +115,8 @@ router.get('/marketplace', requireLogin, (req, res) => {
     activeCount: active.length,
     soldCount: sold.length,
     draftCount: draft.length,
-    q
+    q,
+   currentUser: req.session.user
   });
 });
 
