@@ -116,8 +116,41 @@ router.get('/marketplace', requireLogin, (req, res) => {
     soldCount: sold.length,
     draftCount: draft.length,
     q,
-   currentUser: req.session.user
+    currentUser: req.session.user,
+    error: req.query.error || null,
+    success: req.query.success || null
   });
+});
+
+router.post('/marketplace/change-password', requireLogin, (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const user = req.session.user;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return res.redirect('/marketplace?section=change-password&error=Please fill out all fields');
+  }
+
+  if (currentPassword !== user.password) {
+    return res.redirect('/marketplace?section=change-password&error=Current password is incorrect');
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.redirect('/marketplace?section=change-password&error=New passwords do not match');
+  }
+
+  if (newPassword.length < 6) {
+    return res.redirect('/marketplace?section=change-password&error=New password must be at least 6 characters');
+  }
+
+  db.prepare(`
+    UPDATE users
+    SET password = ?
+    WHERE id = ?
+  `).run(newPassword, user.id);
+
+  req.session.user.password = newPassword;
+
+  return res.redirect('/marketplace?section=change-password&success=Password updated successfully');
 });
 
 router.post('/marketplace/listings', requireLogin, (req, res) => {
