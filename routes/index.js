@@ -1,10 +1,14 @@
 var express = require('express');
 const nodemailer = require("nodemailer");
-const { setDefaultHighWaterMark } = require('nodemailer/lib/xoauth2');
+const db = require('../db');
 
 var router = express.Router();
 
-/* Email that will be sending the verification codes. */
+function requireLogin(req, res, next) {
+  if (!req.session.user) return res.redirect('/login');
+  next();
+}
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -13,271 +17,151 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-let users = [];
 let pendingUser = {};
 
-/* In-memory listings */
-let listings = [
-  {
-    id: 1,
-    title: "Calculus Textbook",
-    description: "Good condition, used for Math 171.",
-    category: "Textbooks",
-    price: 45,
-    pickupArea: "CUB",
-    image: "https://via.placeholder.com/400x250",
-    status: "Active",
-    sellerName: "Alex Johnson",
-    sellerEmail: "alex@wsu.edu"
-  },
-  {
-    id: 2,
-    title: "Mini Fridge",
-    description: "Perfect for dorm rooms. Works great.",
-    category: "Dorm Supplies",
-    price: 60,
-    pickupArea: "Library",
-    image: "https://via.placeholder.com/400x250",
-    status: "Active",
-    sellerName: "Alex Johnson",
-    sellerEmail: "alex@wsu.edu"
-  },
-  {
-    id: 3,
-    title: "TI-84 Calculator",
-    description: "Lightly used. Great for engineering classes.",
-    category: "School Supplies",
-    price: 70,
-    pickupArea: "Spark",
-    image: "https://via.placeholder.com/400x250",
-    status: "Active",
-    sellerName: "Alex Johnson",
-    sellerEmail: "alex@wsu.edu"
-  }
-];
+router.get('/', (req, res) => res.redirect('/login'));
 
-/* DIRECT TO login page */
-router.get('/', function(req, res, next) {
-  res.redirect('/login');
-});
+router.get('/login', (req, res) => res.render('login'));
 
-/* GET login */
-router.get('/login', function(req, res, next) {
-  res.render('login');
-});
+router.post('/login', (req, res) => {
+  const cEmail = (req.body.email || "").toLowerCase();
 
-/* POST Login */
-router.post('/login', function(req, res) {
-  const { email, password } = req.body;
+  const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(cEmail);
 
-  const cEmail = email.toLowerCase();
-  const user = users.find(u => u.email === cEmail);
-
-  if (!user) {
-    return res.render('login', { error: "User not found" });
-  }
-
-  if (user.password !== password) {
+  if (!user) return res.render('login', { error: "User not found" });
+  if (user.password !== req.body.password) {
     return res.render('login', { error: "Incorrect password" });
   }
 
   req.session.user = user;
-  return res.redirect('/marketplace');
+  res.redirect('/marketplace');
 });
 
-/* GET signup */
-router.get('/signup', function(req, res) {
-  res.render('signup');
-});
+router.get('/signup', (req, res) => res.render('signup'));
 
-/* GET Marketplace / all sections */
-router.get('/marketplace', function(req, res, next) {
-  const allowedSections = [
-    'marketplace',
-    'search-results',
-    'item-details',
-    'profile',
-    'edit-profile',
-    'change-password',
-    'seller-dashboard',
-    'create-listing',
-    'seller-messages',
-    'report-listing',
-    'become-seller'
-  ];
-
-  let section = req.query.section || 'marketplace';
-
-  if (!allowedSections.includes(section)) {
-    section = 'marketplace';
-  }
-
-  const q = (req.query.q || "").trim().toLowerCase();
-  let filteredListings = listings;
-
-  if (q) {
-    filteredListings = listings.filter(listing =>
-      listing.title.toLowerCase().includes(q) ||
-      listing.description.toLowerCase().includes(q) ||
-      listing.category.toLowerCase().includes(q)
-    );
-  }
-
-  const listingId = Number(req.query.id);
-  const selectedListing =
-    listings.find(l => l.id === listingId) ||
-    listings.find(l => l.status === "Active") ||
-    listings[0] ||
-    null;
-
-  const activeListings = listings.filter(l => l.status === "Active");
-  const soldListings = listings.filter(l => l.status === "Sold");
-  const draftListings = listings.filter(l => l.status === "Draft");
-
-  res.render('index', {
-    title: 'CougPlace',
-    section,
-    listings: activeListings,
-    filteredListings,
-    selectedListing,
-    sellerListings: listings,
-    activeCount: activeListings.length,
-    soldCount: soldListings.length,
-    draftCount: draftListings.length,
-    q
-  });
-});
-
-/* NEW: POST create listing */
-router.post('/marketplace/listings', function(req, res) {
-  const {
-    title,
-    description,
-    category,
-    price,
-    pickupArea,
-    image,
-    status
-  } = req.body;
-
-  if (!title || !description || !category || !price || !pickupArea) {
-    return res.redirect('/marketplace?section=create-listing');
-  }
-
-  const newListing = {
-    id: listings.length ? listings[listings.length - 1].id + 1 : 1,
-    title: title.trim(),
-    description: description.trim(),
-    category: category.trim(),
-    price: Number(price),
-    pickupArea: pickupArea.trim(),
-    image: image && image.trim() !== "" ? image.trim() : "https://via.placeholder.com/400x250",
-    status: status || "Active",
-    sellerName: req.session.user
-      ? `${req.session.user.firstName} ${req.session.user.lastName}`
-      : "Bucky Student",
-    sellerEmail: req.session.user ? req.session.user.email : "bucky@wsu.edu"
-  };
-
-  listings.unshift(newListing);
-
-  if (newListing.status === "Draft") {
-    return res.redirect('/marketplace?section=seller-dashboard');
-  }
-
-  return res.redirect('/marketplace?section=marketplace');
-});
-
-/* OPTIONAL: mark listing as sold */
-router.post('/marketplace/listings/:id/sold', function(req, res) {
-  const id = Number(req.params.id);
-  const listing = listings.find(l => l.id === id);
-
-  if (listing) {
-    listing.status = "Sold";
-  }
-
-  res.redirect('/marketplace?section=seller-dashboard');
-});
-
-/* OPTIONAL: delete listing */
-router.post('/marketplace/listings/:id/delete', function(req, res) {
-  const id = Number(req.params.id);
-  listings = listings.filter(l => l.id !== id);
-  res.redirect('/marketplace?section=seller-dashboard');
-});
-
-/* POST Signup */
-router.post('/signup', function(req, res) {
+router.post('/signup', (req, res) => {
   const { firstName, lastName, email, gender, age, password } = req.body;
 
-  let errors = [];
-
-  if (Number(age) < 18) {
-    errors.push("You must be 18 or older.");
-  }
-
-  if (!email.endsWith('.edu')) {
-    errors.push('Email must contain ".edu"');
-  }
-
-  if (errors.length > 0) {
-    return res.render('signup', { error: errors[0] });
-  }
+  if (Number(age) < 18) return res.render('signup', { error: "You must be 18 or older." });
+  if (!email.endsWith('.edu')) return res.render('signup', { error: 'Email must contain ".edu"' });
 
   const code = Math.floor(100000 + Math.random() * 900000);
   const cEmail = email.toLowerCase();
 
-  pendingUser[cEmail] = {
-    code: code,
-    firstName,
-    lastName,
-    gender,
-    age: Number(age),
-    password: password
-  };
+  pendingUser[cEmail] = { code, firstName, lastName, gender, age: Number(age), password };
 
   transporter.sendMail({
     from: "cougplace@gmail.com",
     to: email,
     subject: "Verify CougPlace account!",
     text: `Your code is: ${code}`
-  }, (err, info) => {
-    if (err) {
-      console.log("Email error:", err);
-      return res.send("Error sending email.");
-    }
-
-    return res.render('verify', { email });
+  }, () => {
+    res.render('verify', { email });
   });
 });
 
-router.get('/verify', function(req, res) {
-  res.render('verify');
-});
+router.get('/verify', (req, res) => res.render('verify'));
 
-router.post('/verify', function(req, res) {
+router.post('/verify', (req, res) => {
   const { email, code } = req.body;
+  const u = pendingUser[email];
 
-  if (!pendingUser[email]) {
-    return res.send("No pending account found.");
-  }
+  if (!u) return res.send("No pending account found.");
+  if (u.code !== Number(code)) return res.send("Invalid code.");
 
-  if (pendingUser[email].code !== Number(code)) {
-    return res.send("Invalid code.");
-  }
-
-  users.push({
-    email: email,
-    firstName: pendingUser[email].firstName,
-    lastName: pendingUser[email].lastName,
-    gender: pendingUser[email].gender,
-    age: pendingUser[email].age,
-    password: pendingUser[email].password
-  });
+  db.prepare(`
+    INSERT INTO users (email, password, firstName, lastName, gender, age)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(email, u.password, u.firstName, u.lastName, u.gender, u.age);
 
   delete pendingUser[email];
-  return res.redirect('/login');
+
+  res.redirect('/login');
+});
+
+router.get('/marketplace', requireLogin, (req, res) => {
+  const all = db.prepare(`SELECT * FROM listings`).all();
+
+  const active = all.filter(l => l.status === "Active");
+  const sold = all.filter(l => l.status === "Sold");
+  const draft = all.filter(l => l.status === "Draft");
+
+  const q = (req.query.q || "").trim().toLowerCase();
+
+  let filtered = active;
+
+  if (q) {
+    filtered = active.filter(l =>
+      l.title.toLowerCase().includes(q) ||
+      l.description.toLowerCase().includes(q) ||
+      l.category.toLowerCase().includes(q)
+    );
+  }
+
+  const selected =
+    all.find(l => l.id === Number(req.query.id)) ||
+    active[0] ||
+    null;
+
+  const userId = req.session.user.id;
+
+  res.render('index', {
+    title: 'CougPlace',
+    section: req.query.section || 'marketplace',
+    listings: active,
+    filteredListings: filtered,
+    selectedListing: selected,
+    sellerListings: db.prepare(`SELECT * FROM listings WHERE userId = ?`).all(userId),
+    activeCount: active.length,
+    soldCount: sold.length,
+    draftCount: draft.length,
+    q
+  });
+});
+
+router.post('/marketplace/listings', requireLogin, (req, res) => {
+  const u = req.session.user;
+
+  db.prepare(`
+    INSERT INTO listings 
+    (userId, title, description, category, price, pickupArea, image, status, sellerName, sellerEmail)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    u.id,
+    req.body.title,
+    req.body.description,
+    req.body.category,
+    Number(req.body.price),
+    req.body.pickupArea,
+    req.body.image || "https://via.placeholder.com/400x250",
+    req.body.status || "Active",
+    `${u.firstName} ${u.lastName}`,
+    u.email
+  );
+
+  res.redirect('/marketplace');
+});
+
+router.post('/marketplace/listings/:id/sold', requireLogin, (req, res) => {
+  db.prepare(`
+    UPDATE listings SET status = 'Sold'
+    WHERE id = ? AND userId = ?
+  `).run(req.params.id, req.session.user.id);
+
+  res.redirect('/marketplace?section=seller-dashboard');
+});
+
+router.post('/marketplace/listings/:id/delete', requireLogin, (req, res) => {
+  db.prepare(`
+    DELETE FROM listings 
+    WHERE id = ? AND userId = ?
+  `).run(req.params.id, req.session.user.id);
+
+  res.redirect('/marketplace?section=seller-dashboard');
+});
+
+router.get('/chat', requireLogin, (req, res) => {
+  res.render('chat');
 });
 
 module.exports = router;
