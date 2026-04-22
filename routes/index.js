@@ -198,4 +198,15 @@ router.get('/chat', requireLogin, (req, res) => {
   res.render('chat');
 });
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.redirect('/marketplace');
+    }
+
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  });
+});
+
 module.exports = router;
