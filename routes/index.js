@@ -104,6 +104,11 @@ router.get('/marketplace', requireLogin, (req, res) => {
     null;
 
   const userId = req.session.user.id;
+  const sellerListings = db.prepare(`SELECT * FROM listings WHERE userId = ?`).all(userId);
+
+  const sellerActive = sellerListings.filter(l => l.status === "Active");
+  const sellerSold = sellerListings.filter(l => l.status === "Sold");
+  const sellerDraft = sellerListings.filter(l => l.status === "Draft");
 
   res.render('index', {
     title: 'CougPlace',
@@ -111,10 +116,10 @@ router.get('/marketplace', requireLogin, (req, res) => {
     listings: active,
     filteredListings: filtered,
     selectedListing: selected,
-    sellerListings: db.prepare(`SELECT * FROM listings WHERE userId = ?`).all(userId),
-    activeCount: active.length,
-    soldCount: sold.length,
-    draftCount: draft.length,
+    sellerListings: sellerListings,
+    activeCount: sellerActive.length,
+    soldCount: sellerSold.length,
+    draftCount: sellerDraft.length,
     q,
     currentUser: req.session.user,
     error: req.query.error || null,
