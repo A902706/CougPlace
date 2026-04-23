@@ -33,6 +33,19 @@ CREATE TABLE IF NOT EXISTS listings (
 );
 `).run();
 
+// Reports tables
+db.prepare(`
+CREATE TABLE IF NOT EXISTS reports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  listingId INTEGER,
+  reason TEXT,
+  details TEXT,
+  reportedBy INTEGER,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  status TEXT DEFAULT 'Open'
+);
+`).run();
+
 /*ADMIN ACCOUNT for testing
 if you delete the database for some reason or what ever run this to add it
 ONLY ONCE THEN DELETE IT after you run it

@@ -4,93 +4,176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Tickets</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .cougplaceRed {
+            background-color: #981e32 !important;
+            border-color: #981e32 !important;
+            color: white !important;
+        }
+
+        .cougplaceRed:hover {
+            background-color: #7f182a !important;
+            border-color: #7f182a !important;
+        }
+    </style>
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">CougPlace</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="/admin/dashboard">Dashboard</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container">
-        <h1 class="mb-3">User Tickets</h1>
-        <p class="lead">Review requests submitted by users, such as ban appeals or support questions.</p>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark cougplaceRed mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">CougPlace</a>
 
-        <table class="table table-striped">
-            <thead><!-- Table header with column names -->
-                <tr>
-                    <th scope="col">Ticket ID</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Message</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody><!-- Table body with example tickets that a user could submit -->
-                <tr>
-                    <td>#201</td>
-                    <td>Andres1</td>
-                    <td>Ban Appeal</td>
-                    <td>Requesting review for suspension due to misunderstanding.</td>
-                    <td><span class="badge bg-secondary">Pending</span></td>
-                    <td> <!-- Action buttons to approve, deny, or respond to the ticket -->
-                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#ticketModal" data-action="Approve" data-ticket="201">Approve</button>
-                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#ticketModal" data-action="Deny" data-ticket="201">Deny</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>#202</td>
-                    <td>Andres2</td>
-                    <td>General Question</td>
-                    <td>Asking if listings for used textbooks are allowed this semester.</td>
-                    <td><span class="badge bg-secondary">Pending</span></td>
-                    <td> <!-- Action button to respond to the ticket, since it's a question rather than an appeal -->
-                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#ticketModal" data-action="Respond" data-ticket="202">Respond</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <!-- Ticket Action Modal -->
-    <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header just contains the title -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ticketModalLabel">Ticket Action</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <!-- Modal Body: Contains confirmation do you want to ___ this ticket-->
-                <div class="modal-body">
-                    Are you sure you want to <strong id="ticketActionType"></strong> ticket <strong id="ticketId"></strong>?
-                    <div class="mb-3 mt-3">
-                        <!-- Admin Note / Response -->
-                        <label for="adminNote" class="form-label">Admin Note / Response:</label>
-                        <textarea class="form-control" id="adminNote" rows="4" placeholder="Enter your explanation or response"></textarea>
-                    </div>
-                </div>
-                <!-- Modal Footer: Contains cancel and confirm buttons -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmAction">Confirm</button>
-                </div>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/dashboard">Dashboard</a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Page -->
+<div class="container">
+    <h1 class="mb-3">User Tickets</h1>
+    <p class="lead">Review reports submitted by users.</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Ticket ID</th>
+                <th>User</th>
+                <th>Listing</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <% if (!tickets || tickets.length === 0) { %>
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    No tickets found.
+                </td>
+            </tr>
+        <% } %>
+
+        <% tickets.forEach(function(ticket) { %>
+            <tr>
+                <td>#<%= ticket.id %></td>
+
+                <%= ticket.firstName && ticket.lastName
+                    ? ticket.firstName + ' ' + ticket.lastName
+                    : (ticket.email || ('User #' + ticket.reportedBy))
+                %>
+                <td>
+                    <%= ticket.listingTitle || ('Listing #' + ticket.listingId) %>
+                </td>
+
+                <td>
+                    <strong>Reason:</strong> <%= ticket.reason %><br>
+                    <%= ticket.details %>
+                </td>
+
+                <td>
+                    <% if (ticket.status === 'Open') { %>
+                        <span class="badge bg-warning text-dark">Open</span>
+                    <% } else if (ticket.status === 'Closed') { %>
+                        <span class="badge bg-success">Closed</span>
+                    <% } else { %>
+                        <span class="badge bg-secondary"><%= ticket.status %></span>
+                    <% } %>
+                </td>
+
+                <td>
+                    <button class="btn btn-secondary btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#ticketModal"
+                        data-action="Close"
+                        data-ticket="<%= ticket.id %>">
+                        Close
+                    </button>
+                </td>
+            </tr>
+        <% }) %>
+
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ticketModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Ticket Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to <strong id="ticketActionType"></strong>
+                ticket <strong id="ticketId"></strong>?
+
+                <div class="mb-3 mt-3">
+                    <label class="form-label">Admin Note</label>
+                    <textarea class="form-control" id="adminNote" rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="confirmAction">Confirm</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const ticketModal = document.getElementById('ticketModal');
+
+ticketModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+
+    const action = button.getAttribute('data-action');
+    const ticketId = button.getAttribute('data-ticket');
+
+    document.getElementById('ticketActionType').innerText = action;
+    document.getElementById('ticketId').innerText = ticketId;
+
+    document.getElementById('confirmAction').onclick = async function () {
+        const note = document.getElementById('adminNote').value;
+
+        await fetch(`/admin/tickets/${ticketId}/update`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action,
+                note
+            })
+        });
+
+        location.reload();
+    };
+});
+</script>
+
 </body>
 </html>

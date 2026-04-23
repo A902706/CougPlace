@@ -214,4 +214,19 @@ router.get('/logout', (req, res) => {
   });
 });
 
+router.post('/marketplace/report', requireLogin, (req, res) => {
+  const { listingId, reason, details } = req.body;
+
+  db.prepare(`
+    INSERT INTO reports (listingId, reason, details, reportedBy)
+    VALUES (?, ?, ?, ?)
+  `).run(
+    Number(listingId),
+    reason,
+    details,
+    req.session.user.id
+  );
+
+  res.redirect('/marketplace?section=marketplace');
+});
 module.exports = router;
