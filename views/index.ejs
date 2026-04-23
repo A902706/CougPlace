@@ -31,6 +31,13 @@
               Seller
             </a>
           </li>
+          <% if (currentUser && currentUser.email === "admin@wsu.edu") { %>
+          <li class="nav-item">
+            <a class="nav-link text-warning fw-bold" href="/admin/dashboard">
+              Admin Dashboard
+            </a>
+          </li>
+          <% } %>
           <li class="nav-item">
             <a class="nav-link text-warning fw-bold" href="/logout">
               Sign Out

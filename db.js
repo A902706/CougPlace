@@ -11,11 +11,12 @@ CREATE TABLE IF NOT EXISTS users (
   firstName TEXT,
   lastName TEXT,
   gender TEXT,
-  age INTEGER
+  age INTEGER,
+  role TEXT DEFAULT 'user'
 );
 `).run();
 
-// LISTINGS TABLE (THIS FIXES YOUR ERROR)
+// LISTINGS TABLE
 db.prepare(`
 CREATE TABLE IF NOT EXISTS listings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,4 +33,21 @@ CREATE TABLE IF NOT EXISTS listings (
 );
 `).run();
 
+/*ADMIN ACCOUNT for testing
+if you delete the database for some reason or what ever run this to add it
+ONLY ONCE THEN DELETE IT after you run it
+db.prepare(`
+  INSERT INTO users (email, password, firstName, lastName, gender, age, role)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
+`).run(
+  "admin@wsu.edu",
+  "admin123", 
+  "Admin",
+  "User",
+  "Other",
+  25,
+  "admin"
+);
+admin@wsu.edu
+admin123 */
 module.exports = db;
