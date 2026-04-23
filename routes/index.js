@@ -247,4 +247,40 @@ router.post('/marketplace/report', requireLogin, (req, res) => {
 
   res.redirect('/marketplace?section=marketplace');
 });
+
+router.post('/marketplace/edit-profile', requireLogin, (req, res) => {
+  const { firstName, lastName, email, gender, age } = req.body;
+  const user = req.session.user;
+
+  if (!firstName || !lastName || !email || !gender || !age) {
+    return res.redirect('/marketplace?section=edit-profile&error=Please fill out all fields');
+  }
+
+  if (Number(age) < 18) {
+    return res.redirect('/marketplace?section=edit-profile&error=You must be 18 or older');
+  }
+
+  if (!email.endsWith('.edu')) {
+    return res.redirect('/marketplace?section=edit-profile&error=Email must contain ".edu"');
+  }
+
+  db.prepare(`
+    UPDATE users
+    SET firstName = ?, lastName = ?, email = ?, gender = ?, age = ?
+    WHERE id = ?
+  `).run(
+    firstName.trim(),
+    lastName.trim(),
+    email.trim().toLowerCase(),
+    gender.trim(),
+    Number(age),
+    user.id
+  );
+
+  const updatedUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user.id);
+  req.session.user = updatedUser;
+
+  return res.redirect('/marketplace?section=profile&success=Profile updated successfully');
+});
+
 module.exports = router;
