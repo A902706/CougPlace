@@ -87,15 +87,31 @@ router.get('/marketplace', requireLogin, (req, res) => {
   const draft = all.filter(l => l.status === "Draft");
 
   const q = (req.query.q || "").trim().toLowerCase();
+  const category = (req.query.category || "").trim();
+  const sort = (req.query.sort || "").trim();
 
   let filtered = active;
 
   if (q) {
-    filtered = active.filter(l =>
+    filtered = filtered.filter(l =>
       l.title.toLowerCase().includes(q) ||
       l.description.toLowerCase().includes(q) ||
       l.category.toLowerCase().includes(q)
     );
+  }
+
+  if (category) {
+    filtered = filtered.filter(l => l.category === category);
+  }
+
+  if (sort === "priceLow") {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sort === "priceHigh") {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (sort === "titleAZ") {
+    filtered.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sort === "titleZA") {
+    filtered.sort((a, b) => b.title.localeCompare(a.title));
   }
 
   const selected =
@@ -121,6 +137,8 @@ router.get('/marketplace', requireLogin, (req, res) => {
     soldCount: sellerSold.length,
     draftCount: sellerDraft.length,
     q,
+    category,
+    sort,
     currentUser: req.session.user,
     error: req.query.error || null,
     success: req.query.success || null

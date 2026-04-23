@@ -151,29 +151,53 @@
       </div>
     </footer>
 
-  <% } else if (section === 'search-results') { %>
+    <% } else if (section === 'search-results') { %>
     <main class="container my-5">
       <div class="mb-4">
         <h1 class="fw-bold">Search Results</h1>
-        <p class="text-muted">Showing results for: <strong><%= q || 'all listings' %></strong></p>
+        <p class="text-muted">
+          Showing results for:
+          <strong><%= q || 'all listings' %></strong>
+          <% if (category) { %>
+            in <strong><%= category %></strong>
+          <% } %>
+        </p>
       </div>
 
       <form class="row mb-4 g-3" action="/marketplace" method="GET">
         <input type="hidden" name="section" value="search-results">
 
         <div class="col-md-4">
-          <input type="text" name="q" class="form-control" value="<%= q || '' %>" placeholder="Search listings">
+          <input
+            type="text"
+            name="q"
+            class="form-control"
+            value="<%= q || '' %>"
+            placeholder="Search listings"
+          >
         </div>
+
         <div class="col-md-3">
-          <select class="form-select" disabled>
-            <option selected>All Categories</option>
+          <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            <option value="Books" <%= category === 'Books' ? 'selected' : '' %>>Books</option>
+            <option value="Electronics" <%= category === 'Electronics' ? 'selected' : '' %>>Electronics</option>
+            <option value="School Supplies" <%= category === 'School Supplies' ? 'selected' : '' %>>School Supplies</option>
+            <option value="Dorm Supplies" <%= category === 'Dorm Supplies' ? 'selected' : '' %>>Dorm Supplies</option>
+            <option value="Other" <%= category === 'Other' ? 'selected' : '' %>>Other</option>
           </select>
         </div>
+
         <div class="col-md-3">
-          <select class="form-select" disabled>
-            <option selected>Sort By</option>
+          <select name="sort" class="form-select">
+            <option value="">Sort By</option>
+            <option value="priceLow" <%= sort === 'priceLow' ? 'selected' : '' %>>Price Low to High</option>
+            <option value="priceHigh" <%= sort === 'priceHigh' ? 'selected' : '' %>>Price High to Low</option>
+            <option value="titleAZ" <%= sort === 'titleAZ' ? 'selected' : '' %>>Title A to Z</option>
+            <option value="titleZA" <%= sort === 'titleZA' ? 'selected' : '' %>>Title Z to A</option>
           </select>
         </div>
+
         <div class="col-md-2">
           <button class="btn btn-primary-custom w-100" type="submit">Apply</button>
         </div>
