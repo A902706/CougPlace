@@ -349,84 +349,105 @@
       </div>
     </footer>
 
-  <% } else if (section === 'edit-profile') { %>
-  <main class="container my-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card shadow-sm border-0 profile-card">
-          <div class="card-body p-4">
-            <h2 class="fw-bold mb-4">Edit Profile</h2>
+    <% } else if (section === 'edit-profile') { %>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0 profile-card">
+            <div class="card-body p-4">
+              <h2 class="fw-bold mb-4">Edit Profile</h2>
 
-            <form>
-              <div class="mb-3">
-                <label class="form-label">First Name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  value="<%= currentUser ? currentUser.firstName : '' %>"
-                >
-              </div>
+              <% if (error) { %>
+                <div class="alert alert-danger">
+                  <%= error %>
+                </div>
+              <% } %>
 
-              <div class="mb-3">
-                <label class="form-label">Last Name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  value="<%= currentUser ? currentUser.lastName : '' %>"
-                >
-              </div>
+              <% if (success) { %>
+                <div class="alert alert-success">
+                  <%= success %>
+                </div>
+              <% } %>
 
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  value="<%= currentUser ? currentUser.email : '' %>"
-                >
-              </div>
+              <form action="/marketplace/edit-profile" method="POST">
+                <div class="mb-3">
+                  <label class="form-label">First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    class="form-control"
+                    value="<%= currentUser ? currentUser.firstName : '' %>"
+                    required
+                  >
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label">Gender</label>
-                <select class="form-select">
-                  <option <%= currentUser && currentUser.gender === 'Male' ? 'selected' : '' %>>
-                    Male
-                  </option>
-                  <option <%= currentUser && currentUser.gender === 'Female' ? 'selected' : '' %>>
-                    Female
-                  </option>
-                  <option <%= currentUser && currentUser.gender === 'Other' ? 'selected' : '' %>>
-                    Other
-                  </option>
-                </select>
-              </div>
+                <div class="mb-3">
+                  <label class="form-label">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    class="form-control"
+                    value="<%= currentUser ? currentUser.lastName : '' %>"
+                    required
+                  >
+                </div>
 
-              <div class="mb-3">
-                <label class="form-label">Age</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  value="<%= currentUser ? currentUser.age : '' %>"
-                >
-              </div>
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="<%= currentUser ? currentUser.email : '' %>"
+                    required
+                  >
+                </div>
 
-              <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-primary-custom">
-                  Save Changes
-                </button>
-                <a
-                  href="/marketplace?section=profile"
-                  class="btn btn-outline-secondary"
-                >
-                  Cancel
-                </a>
-              </div>
-            </form>
+                <div class="mb-3">
+                  <label class="form-label">Gender</label>
+                  <select name="gender" class="form-select" required>
+                    <option value="Male" <%= currentUser && currentUser.gender === 'Male' ? 'selected' : '' %>>
+                      Male
+                    </option>
+                    <option value="Female" <%= currentUser && currentUser.gender === 'Female' ? 'selected' : '' %>>
+                      Female
+                    </option>
+                    <option value="Other" <%= currentUser && currentUser.gender === 'Other' ? 'selected' : '' %>>
+                      Other
+                    </option>
+                  </select>
+                </div>
 
+                <div class="mb-3">
+                  <label class="form-label">Age</label>
+                  <input
+                    type="number"
+                    name="age"
+                    class="form-control"
+                    value="<%= currentUser ? currentUser.age : '' %>"
+                    min="18"
+                    required
+                  >
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary-custom">
+                    Save Changes
+                  </button>
+                  <a
+                    href="/marketplace?section=profile"
+                    class="btn btn-outline-secondary"
+                  >
+                    Cancel
+                  </a>
+                </div>
+              </form>
+
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
   <% } else if (section === 'change-password') { %>
   <main class="container my-5">
